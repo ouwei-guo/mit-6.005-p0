@@ -4,6 +4,7 @@
 package turtle;
 
 import java.util.List;
+
 import java.util.ArrayList;
 
 public class TurtleSoup {
@@ -15,7 +16,10 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawSquare(Turtle turtle, int sideLength) {
-        throw new RuntimeException("implement me!");
+        for(int i = 0; i < 4; i++) {
+            turtle.forward(sideLength);
+            turtle.turn(90);
+        }
     }
 
     /**
@@ -28,7 +32,9 @@ public class TurtleSoup {
      * @return angle in degrees, where 0 <= angle < 360
      */
     public static double calculateRegularPolygonAngle(int sides) {
-        throw new RuntimeException("implement me!");
+        double angle = 0.0;
+        angle = (180.0/sides)*(sides-2);
+        return angle;
     }
 
     /**
@@ -42,7 +48,9 @@ public class TurtleSoup {
      * @return the integer number of sides
      */
     public static int calculatePolygonSidesFromAngle(double angle) {
-        throw new RuntimeException("implement me!");
+        int sides = 0;
+        sides = (int) Math.round(360.0/(180.0-angle));
+        return sides;
     }
 
     /**
@@ -55,7 +63,12 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawRegularPolygon(Turtle turtle, int sides, int sideLength) {
-        throw new RuntimeException("implement me!");
+        double angle = 180.0-calculateRegularPolygonAngle(sides);
+        System.out.println(angle);
+        for(int i = 0; i < sides; i++) {
+            turtle.forward(sideLength);
+            turtle.turn(angle);
+        }
     }
 
     /**
@@ -79,7 +92,27 @@ public class TurtleSoup {
      */
     public static double calculateHeadingToPoint(double currentHeading, int currentX, int currentY,
                                                  int targetX, int targetY) {
-        throw new RuntimeException("implement me!");
+        double angle = 0.0;
+        if(currentX == targetX && currentY == targetY) {
+            return angle;
+        }
+        /*
+        solution from:
+        https://stackoverflow.com/questions/8502795/get-direction-compass-with-two-longitude-latitude-points
+        */
+        double dLon = Math.toRadians(targetX-currentX);
+        double lat1 = Math.toRadians(currentY);
+        double lat2 = Math.toRadians(targetY);
+        
+        double y = Math.sin(dLon) * Math.cos(lat2);
+        double x = Math.cos(lat1) * Math.sin(lat2) -
+                Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+        //System.out.println(x+","+y);
+        angle = Math.toDegrees(Math.atan2(y,x)) - currentHeading;
+        if(angle<0) {
+            angle = 360-Math.abs(angle);
+        }
+        return Math.ceil(angle);
     }
 
     /**
@@ -97,7 +130,15 @@ public class TurtleSoup {
      *         otherwise of size (# of points) - 1
      */
     public static List<Double> calculateHeadings(List<Integer> xCoords, List<Integer> yCoords) {
-        throw new RuntimeException("implement me!");
+        List<Double> headings = new ArrayList<Double>();
+        headings.add(0.0);
+        for(int i = 0; i < xCoords.size()-1; i++) {
+            headings.add(calculateHeadingToPoint(headings.get(i), xCoords.get(i), yCoords.get(i),
+                    xCoords.get(i+1), yCoords.get(i+1)));
+            System.out.println(headings.get(i+1));
+        }
+        headings.remove(0);
+        return headings;
     }
 
     /**
@@ -109,7 +150,28 @@ public class TurtleSoup {
      * @param turtle the turtle context
      */
     public static void drawPersonalArt(Turtle turtle) {
-        throw new RuntimeException("implement me!");
+        drawSierpisky(turtle,50,2);
+    }
+    
+    public static void drawSierpisky(Turtle turtle, int sideLength, int depth) {
+        if (depth == 0) {
+            for(int i = 0; i < 3; i++) {
+                turtle.forward(sideLength);
+                turtle.turn(240);
+            }
+        }
+        drawSierpisky(turtle,sideLength,(depth-1));
+        turtle.forward(sideLength/2);
+        drawSierpisky(turtle,sideLength,(depth-1));
+        turtle.turn(180);
+        turtle.forward(sideLength/2);
+        turtle.turn(240);
+        turtle.forward(sideLength/2);
+        turtle.turn(60);
+        drawSierpisky(turtle,sideLength,(depth-1));
+        turtle.turn(120);
+        turtle.forward(sideLength/2);
+        turtle.turn(240);
     }
 
     /**
@@ -122,7 +184,8 @@ public class TurtleSoup {
     public static void main(String args[]) {
         DrawableTurtle turtle = new DrawableTurtle();
 
-        drawSquare(turtle, 40);
+        //drawRegularPolygon(turtle, 8, 50);
+        drawPersonalArt(turtle);
 
         // draw the window
         turtle.draw();
