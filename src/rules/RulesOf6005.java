@@ -38,7 +38,11 @@ public class RulesOf6005 {
         
         // TODO: Fill in this method, then remove the exception
         
-        throw new RuntimeException("implement me!");
+        boolean retVal = false;
+        if (writtenByYourself) {
+            retVal = true;
+        }
+        return retVal;
     }
     
     /**
